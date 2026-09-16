@@ -1,64 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { VIDEOS, getVimeoEmbedUrl } from "@/app/videos-config";
 
 export default function ContentPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
   const [selectedVideoId, setSelectedVideoId] = useState<string>(VIDEOS[0].id);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        router.push("/login");
-        return;
-      }
-
-      setUser(user);
-      setLoading(false);
-    };
-
-    checkAuth();
-  }, [router]);
-
-  const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/login");
-  };
-
-  if (loading) {
-    return <div style={{ padding: "20px" }}>로딩 중...</div>;
-  }
 
   return (
     <div style={{ backgroundColor: "#ffffff", color: "#000000", minHeight: "100vh", padding: "20px" }}>
       <div style={{ maxWidth: "600px", margin: "0 auto" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
-          <h1 style={{ color: "#d4af37", margin: "0" }}>콘텐츠</h1>
-          <button
-            onClick={handleLogout}
-            style={{
-              backgroundColor: "#d4af37",
-              color: "#000000",
-              border: "none",
-              padding: "8px 16px",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              fontSize: "14px",
-            }}
-          >
-            로그아웃
-          </button>
-        </div>
+        <h1 style={{ color: "#d4af37", marginBottom: "40px" }}>콘텐츠</h1>
 
         <div style={{ marginBottom: "30px" }}>
           <button
