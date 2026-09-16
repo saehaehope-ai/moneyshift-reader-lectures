@@ -18,6 +18,10 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
+      const urlExists = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const keyExists = !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      console.log("[Signup Diagnosis] Environment variables:", { urlExists, keyExists });
+
       const supabase = createClient();
 
       const { error, data } = await supabase.auth.signUp({
