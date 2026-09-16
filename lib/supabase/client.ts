@@ -2,15 +2,13 @@
 
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    `Supabase configuration is missing. URL: ${!!supabaseUrl}, Key: ${!!supabaseAnonKey}`
-  );
-}
-
 export function createClient() {
-  return createSupabaseClient(supabaseUrl!, supabaseAnonKey!);
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error("Supabase configuration is missing");
+  }
+
+  return createSupabaseClient(supabaseUrl, supabaseAnonKey);
 }
