@@ -11,11 +11,6 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [diagnosis, setDiagnosis] = useState<{
-    urlExists: boolean;
-    keyExists: boolean;
-    clientError?: string;
-  } | null>(null);
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
@@ -23,22 +18,7 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const urlExists = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const keyExists = !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      setDiagnosis({ urlExists, keyExists });
-
-      let supabase;
-      try {
-        supabase = createClient();
-      } catch (clientErr: any) {
-        setDiagnosis((prev) => ({
-          ...prev!,
-          clientError: clientErr?.message || "Failed to create client",
-        }));
-        setError(clientErr?.message || "Supabase client initialization failed");
-        setLoading(false);
-        return;
-      }
+      const supabase = createClient();
 
       const { error, data } = await supabase.auth.signUp({
         email: email.trim(),
@@ -77,26 +57,6 @@ export default function SignupPage() {
   return (
     <div style={{ maxWidth: "400px", margin: "100px auto", padding: "20px", backgroundColor: "#ffffff", color: "#000000" }}>
       <h1 style={{ color: "#d4af37", textAlign: "center" }}>회원가입</h1>
-      {diagnosis && (
-        <div
-          style={{
-            backgroundColor: "#f0f0f0",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "12px",
-            marginBottom: "20px",
-            fontSize: "12px",
-            color: "#333",
-          }}
-        >
-          <div>
-            <strong>[진단 정보]</strong>
-          </div>
-          <div>URL 존재: {diagnosis.urlExists ? "✓" : "✗"}</div>
-          <div>KEY 존재: {diagnosis.keyExists ? "✓" : "✗"}</div>
-          {diagnosis.clientError && <div style={{ color: "#cc0000", marginTop: "8px" }}>Client 오류: {diagnosis.clientError}</div>}
-        </div>
-      )}
       <form onSubmit={handleSignup}>
         <div style={{ marginBottom: "15px" }}>
           <input
