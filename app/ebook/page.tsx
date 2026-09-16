@@ -2,22 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
 import { createClient } from "@/lib/supabase/client";
-
-const SinglePageReader = dynamic(() => import("./single-page-reader"), {
-  ssr: false,
-});
-
-const MobileReader = dynamic(() => import("./mobile-reader"), {
-  ssr: false,
-});
 
 export default function EbookPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -36,45 +26,43 @@ export default function EbookPage() {
     checkAuth();
   }, [router]);
 
-  useEffect(() => {
-    const checkViewport = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkViewport();
-    window.addEventListener("resize", checkViewport);
-    return () => window.removeEventListener("resize", checkViewport);
-  }, []);
-
   if (loading) {
     return <div style={{ padding: "20px" }}>로딩 중...</div>;
   }
 
   return (
-    <div style={{ backgroundColor: "#ffffff", color: "#000000", minHeight: "100vh", padding: "20px" }}>
-      <div style={{ maxWidth: isMobile ? "100%" : "900px", margin: "0 auto" }}>
-        <div style={{ marginBottom: "20px" }}>
-          <button
-            onClick={() => router.push("/content")}
-            style={{
-              backgroundColor: "#d4af37",
-              color: "#000000",
-              border: "none",
-              padding: "8px 16px",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              fontSize: "14px",
-            }}
-          >
-            ← 돌아가기
-          </button>
-        </div>
-
-        <h1 style={{ color: "#d4af37", marginBottom: "20px" }}>머니시프트 전자책</h1>
-
-        {isMobile ? <MobileReader /> : <SinglePageReader />}
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "50px", backgroundColor: "#ffffff", zIndex: 100, display: "flex", alignItems: "center", padding: "0 20px", borderBottom: "1px solid #d4af37" }}>
+        <button
+          onClick={() => router.push("/content")}
+          style={{
+            backgroundColor: "#d4af37",
+            color: "#000000",
+            border: "none",
+            padding: "8px 16px",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontWeight: "bold",
+            fontSize: "14px",
+          }}
+        >
+          ← 돌아가기
+        </button>
       </div>
+      <iframe
+        src="/lecture-ebook.html"
+        style={{
+          position: "absolute",
+          top: "50px",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          border: "none",
+          width: "100%",
+          height: "calc(100% - 50px)",
+        }}
+        title="강의용 전자책"
+      />
     </div>
   );
 }
